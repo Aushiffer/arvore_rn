@@ -1,0 +1,5 @@
+# Arquivos-objeto
+*.o
+
+# Possível executável
+arvore_rn
