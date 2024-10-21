@@ -1,7 +1,6 @@
 #include "arv_rn.h"
 
-No no_nil;
-ArvRN nil = &no_nil;
+ArvRN nil;
 
 void inicia_arv(ArvRN *arv_rn) { *arv_rn = nil; }
 
@@ -18,10 +17,8 @@ ArvRN cria_no(ArvRN pai, Cor cor, int chave) {
     return novo_no;
 }
 
-unsigned char rn_vazia(ArvRN arv_rn) { return arv_rn == nil; }
-
 ArvRN insere_rn_apriori(ArvRN pai, ArvRN arv_rn, ArvRN *no_ins, int chave) {
-    if (rn_vazia(arv_rn)) {
+    if (!arv_rn) {
         ArvRN novo_no = cria_no(pai, RED, chave);
         *no_ins = novo_no;
 
@@ -32,29 +29,29 @@ ArvRN insere_rn_apriori(ArvRN pai, ArvRN arv_rn, ArvRN *no_ins, int chave) {
         arv_rn->esq = insere_rn_apriori(arv_rn, arv_rn->esq, no_ins, chave);
     else if (arv_rn->item < chave)
         arv_rn->dir = insere_rn_apriori(arv_rn, arv_rn->dir, no_ins, chave);
-    else
-        return arv_rn;
 
     return arv_rn;
 }
 
 ArvRN insere_rn(ArvRN arv_rn, int chave) {
-    if (rn_vazia(arv_rn)) return cria_no(nil, BLACK, chave);
+    if (!arv_rn || arv_rn == nil) return cria_no(nil, BLACK, chave);
 
     ArvRN no_ins;
 
     if (arv_rn->item > chave)
         arv_rn->esq = insere_rn_apriori(arv_rn, arv_rn->esq, &no_ins, chave);
-    else
+    else if (arv_rn->item < chave)
         arv_rn->dir = insere_rn_apriori(arv_rn, arv_rn->dir, &no_ins, chave);
+    else
+        return arv_rn;
 
-    balanceia_rn(&arv_rn, &no_ins);
+    bal_insercao(&arv_rn, &no_ins);
 
     return arv_rn;
 }
 
 void rot_esq(ArvRN *raiz, ArvRN no_rot) {
-    if (rn_vazia(no_rot) || !no_rot->dir) return;
+    if (!no_rot || !no_rot->dir) return;
 
     ArvRN filho_dir = no_rot->dir;
     no_rot->dir = filho_dir->esq;
@@ -76,7 +73,7 @@ void rot_esq(ArvRN *raiz, ArvRN no_rot) {
 }
 
 void rot_dir(ArvRN *raiz, ArvRN no_rot) {
-    if (rn_vazia(no_rot) || !no_rot->esq) return;
+    if (!no_rot || !no_rot->esq) return;
 
     ArvRN filho_esq = no_rot->esq;
     no_rot->esq = filho_esq->dir;
@@ -97,8 +94,7 @@ void rot_dir(ArvRN *raiz, ArvRN no_rot) {
     no_rot->pai = filho_esq;
 }
 
-// Obrigado Cormen!
-void balanceia_rn(ArvRN *raiz, ArvRN *no_ins) {
+void bal_insercao(ArvRN *raiz, ArvRN *no_ins) {
     ArvRN tio;
 
     while (*no_ins != *raiz && (*no_ins)->pai->cor == RED) {
@@ -149,16 +145,97 @@ void balanceia_rn(ArvRN *raiz, ArvRN *no_ins) {
         (*raiz)->cor = BLACK;
 }
 
+ArvRN busca_rn(ArvRN arv_rn, int chave) {
+    if (!arv_rn || arv_rn == nil || arv_rn->item == chave) return arv_rn;
+
+    if (arv_rn->item > chave)
+        return busca_rn(arv_rn->esq, chave);
+    
+    return busca_rn(arv_rn->dir, chave);
+}
+
+ArvRN predec(ArvRN arv_rn) {
+    if (!arv_rn) return NULL;
+
+    ArvRN no_atual = arv_rn->esq;
+
+    while (no_atual != nil && no_atual->dir != nil)
+        no_atual = no_atual->dir;
+
+    return no_atual;
+}
+
+void transplant(ArvRN *raiz, ArvRN a, ArvRN b) {
+    if (a->pai == nil)
+        *raiz = b;
+    else if (a == a->pai->esq)
+        a->pai->esq = b;
+    else
+        a->pai->dir = b;
+
+    if (b != nil)
+        b->pai = a->pai;
+}
+
+unsigned char remove_rn(ArvRN arv_rn, int key) {
+    if (!arv_rn) return 0;
+
+    ArvRN z = busca_rn(arv_rn, key);
+
+    if (z == nil) return 0;
+
+    ArvRN x;
+    ArvRN y = z;
+    Cor y_cor_og = y->cor;
+
+    if (z->esq == nil) {
+        x = z->dir;
+
+        transplant(&arv_rn, z, z->dir);
+    } else if (z->dir == nil) {
+        x = z->esq;
+
+        transplant(&arv_rn, z, z->esq);
+    } else {
+        y = predec(z);
+        y_cor_og = y->cor;
+        x = y->esq;
+        z->item = y->item;
+
+        transplant(&arv_rn, y, x);
+    }
+
+    if (y_cor_og == BLACK)
+        bal_remocao(&arv_rn, &x);
+
+    free(y);
+
+    return 1;
+}
+
+void bal_remocao(ArvRN *raiz, ArvRN *x) {
+    ArvRN w;
+
+    while (*x != nil && *x != *raiz && (*x)->cor == BLACK) {
+
+    }
+    
+    if (*x != nil)
+        (*x)->cor = BLACK;
+}
+
 void destroi_rn(ArvRN arv_rn) {
-    if (rn_vazia(arv_rn)) return;
+    if (!arv_rn || arv_rn == nil) return;
 
     destroi_rn(arv_rn->esq);
     destroi_rn(arv_rn->dir);
     free(arv_rn);
 }
 
+void destroi_nil() { free(nil); }
+
 void imprime_rn(ArvRN arv_rn) {
-    if (rn_vazia(arv_rn)) {
+    if (!arv_rn || arv_rn == nil) {
         printf("()");
 
         return;
