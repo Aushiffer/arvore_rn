@@ -3,3 +3,6 @@
 
 # Possível executável
 arvore_rn
+
+# Arquivos gerados por debug com Valgrind
+vgcore*
