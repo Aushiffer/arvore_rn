@@ -68,12 +68,12 @@ void rot_esq(ArvRN *raiz, ArvRN no_rot) {
     ArvRN filho_dir = no_rot->dir;
     no_rot->dir = filho_dir->esq;
 
-    if (filho_dir->esq)
+    if (!eh_nulo(filho_dir->esq))
         filho_dir->esq->pai = no_rot;
 
     filho_dir->pai = no_rot->pai;
 
-    if (no_rot->pai == nil)
+    if (eh_nulo(no_rot->pai))
         *raiz = filho_dir;
     else if (no_rot == no_rot->pai->esq)
         no_rot->pai->esq = filho_dir;
@@ -90,12 +90,12 @@ void rot_dir(ArvRN *raiz, ArvRN no_rot) {
     ArvRN filho_esq = no_rot->esq;
     no_rot->esq = filho_esq->dir;
 
-    if (filho_esq->dir)
+    if (!eh_nulo(filho_esq->dir))
         filho_esq->dir->pai = no_rot;
 
     filho_esq->pai = no_rot->pai;
 
-    if (no_rot->pai == nil)
+    if (eh_nulo(no_rot->pai))
         *raiz = filho_esq;
     else if (no_rot == no_rot->pai->esq)
         no_rot->pai->esq = filho_esq;
