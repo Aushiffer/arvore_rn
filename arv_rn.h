@@ -63,7 +63,7 @@ void rot_dir(ArvRN *raiz, ArvRN no_rot);
 // Balanceia a ARN de tal forma que as propriedades continuem sendo respeitadas.
 void bal_insercao(ArvRN *raiz, ArvRN *no_ins);
 
-// Recebe um ponteiro para a raiz de uma ARN e um ponteiro para o nó recentemente removido da ARN.
+// Recebe um ponteiro para a raiz de uma ARN e um ponteiro para o nó que representa o nó removido da ARN.
 // Balanceia a ARN de tal forma que as propriedades continuem sendo respeitadas.
 void bal_remocao(ArvRN *raiz, ArvRN *no_rem);
 
