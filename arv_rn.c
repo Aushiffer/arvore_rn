@@ -193,7 +193,7 @@ unsigned char remove_rn(ArvRN arv_rn, int chave) {
 
     ArvRN z = busca_rn(arv_rn, chave);
 
-    if (z == nil) return 0;
+    if (eh_nulo(z)) return 0;
 
     ArvRN y = z;
     Cor y_cor_og = y->cor;
@@ -213,10 +213,10 @@ unsigned char remove_rn(ArvRN arv_rn, int chave) {
             y->esq->cor = BLACK;
     }
 
-    free(z);
-
     if (y_cor_og == BLACK)
         bal_remocao(&arv_rn, &y);
+
+    free(z);
 
     return 1;
 }
@@ -229,25 +229,63 @@ void bal_remocao(ArvRN *raiz, ArvRN *x) {
             w = (*x)->pai->dir;
 
             if (w->cor == RED) {
-                   
+                w->cor = BLACK;
+                (*x)->pai->cor = RED;
+                
+                rot_esq(raiz, (*x)->pai);
+                
+                w = (*x)->pai->dir;
             }
 
-            if (w->esq->cor == BLACK && w->dir->cor == BLACK) {
-
+            if ((eh_nulo(w->esq) && eh_nulo(w->dir)) || (w->esq->cor == BLACK && w->dir->cor == BLACK)) {
+                w->cor = RED;
+                (*x) = (*x)->pai;
             } else {
+                if (w->esq->cor == RED) {
+                    w->cor = RED;
+                    w->esq->cor = BLACK;
 
+                    rot_dir(raiz, w);
+                }
+
+                w->cor = (*x)->pai->cor;
+                (*x)->pai->cor = BLACK;
+                w->dir->cor = BLACK;
+
+                rot_esq(raiz, (*x)->pai);
+
+                *x = *raiz;
             }
         } else {
             w = (*x)->pai->esq;
 
             if (w->cor == RED) {
-
+                w->cor = BLACK;
+                (*x)->pai->cor = RED;
+                
+                rot_dir(raiz, (*x)->pai);
+                
+                w = (*x)->pai->esq;
             }
 
-            if (w->esq->cor == BLACK && w->dir->cor == BLACK) {
-
+            if ((eh_nulo(w->esq) && eh_nulo(w->dir)) || (w->esq->cor == BLACK && w->dir->cor == BLACK)) {
+                w->cor = RED;
+                (*x) = (*x)->pai;
             } else {
+                if (w->dir->cor == RED) {
+                    w->cor = RED;
+                    w->dir->cor = BLACK;
 
+                    rot_esq(raiz, w);
+                }
+
+                w->cor = (*x)->pai->cor;
+                (*x)->pai->cor = BLACK;
+                w->esq->cor = BLACK;
+
+                rot_dir(raiz, (*x)->pai);
+
+                *x = *raiz;
             }
         }
     }

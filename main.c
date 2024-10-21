@@ -14,7 +14,7 @@ int main() {
             arv_rn = insere_rn(arv_rn, chave);
     } while (chave != -1);
 
-    remove_rn(arv_rn, 64);
+    remove_rn(arv_rn, 16);
     imprime_rn(arv_rn);
     printf("\n");
 
