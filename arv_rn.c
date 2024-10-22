@@ -107,13 +107,13 @@ void rot_dir(ArvRN *raiz, ArvRN no_rot) {
 }
 
 void bal_insercao(ArvRN *raiz, ArvRN *no_ins) {
-    ArvRN tio;
+    ArvRN t;
 
     while (*no_ins != *raiz && (*no_ins)->pai->cor == RED) {
         if ((*no_ins)->pai == (*no_ins)->pai->pai->esq) {
-            tio = (*no_ins)->pai->pai->dir;
+            t = (*no_ins)->pai->pai->dir;
 
-            if (eh_nulo(tio) || tio->cor == BLACK) {
+            if (eh_nulo(t) || t->cor == BLACK) {
                 if ((*no_ins) == (*no_ins)->pai->dir) {
                     (*no_ins) = (*no_ins)->pai;
                     
@@ -125,15 +125,15 @@ void bal_insercao(ArvRN *raiz, ArvRN *no_ins) {
                 
                 rot_dir(raiz, (*no_ins)->pai->pai);
             } else {
-                tio->cor = BLACK;
+                t->cor = BLACK;
                 (*no_ins)->pai->cor = BLACK;
                 (*no_ins)->pai->pai->cor = RED;
                 (*no_ins) = (*no_ins)->pai->pai;
             }
         } else {
-            tio = (*no_ins)->pai->pai->esq;
+            t = (*no_ins)->pai->pai->esq;
 
-            if (eh_nulo(tio) || tio->cor == BLACK) {
+            if (eh_nulo(t) || t->cor == BLACK) {
                 if ((*no_ins) == (*no_ins)->pai->esq) {
                     (*no_ins) = (*no_ins)->pai;
 
@@ -145,7 +145,7 @@ void bal_insercao(ArvRN *raiz, ArvRN *no_ins) {
 
                 rot_esq(raiz, (*no_ins)->pai->pai);
             } else {
-                tio->cor = BLACK;
+                t->cor = BLACK;
                 (*no_ins)->pai->cor = BLACK;
                 (*no_ins)->pai->pai->cor = RED;
                 (*no_ins) = (*no_ins)->pai->pai;
