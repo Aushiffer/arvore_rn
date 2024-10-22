@@ -48,7 +48,7 @@ ArvRN insere_rn_apriori(ArvRN pai, ArvRN arv_rn, ArvRN *no_ins, int chave) {
 ArvRN insere_rn(ArvRN arv_rn, int chave) {
     if (eh_nulo(arv_rn)) return cria_no(nil, BLACK, chave);
 
-    ArvRN no_ins;
+    ArvRN no_ins = arv_rn; // Evitando acesso à regiões não inicializadas da memória.
 
     if (arv_rn->item > chave)
         arv_rn->esq = insere_rn_apriori(arv_rn, arv_rn->esq, &no_ins, chave);
@@ -195,16 +195,21 @@ unsigned char remove_rn(ArvRN arv_rn, int chave) {
 
     if (eh_nulo(z)) return 0;
 
-    ArvRN y = z;
+    ArvRN y = z, x;
     Cor y_cor_og = y->cor;
 
-    if (eh_nulo(z->esq))
+    if (eh_nulo(z->esq)) {
+        x = z->dir;
+
         transplant(&arv_rn, z, z->dir);
-    else if (eh_nulo(z->dir))
+    } else if (eh_nulo(z->dir)) {
+        x = z->esq;
+
         transplant(&arv_rn, z, z->esq);
-    else {
+    } else {
         y = predec(z);
         y_cor_og = y->cor;
+        x = y->esq;
         z->item = y->item;
 
         transplant(&arv_rn, y, y->esq);
@@ -214,14 +219,16 @@ unsigned char remove_rn(ArvRN arv_rn, int chave) {
     }
 
     if (y_cor_og == BLACK)
-        bal_remocao(&arv_rn, &y);
+        bal_remocao(&arv_rn, &x);
 
-    free(z);
+    free(y);
 
     return 1;
 }
 
 void bal_remocao(ArvRN *raiz, ArvRN *x) {
+    if (eh_nulo(*x)) return;
+    
     ArvRN w;
 
     while (*x != *raiz && (*x)->cor == BLACK) {
