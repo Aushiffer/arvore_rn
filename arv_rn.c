@@ -213,9 +213,6 @@ unsigned char remove_rn(ArvRN arv_rn, int chave) {
         z->item = y->item;
 
         transplant(&arv_rn, y, y->esq);
-
-        if (!eh_nulo(y->esq))
-            y->esq->cor = BLACK;
     }
 
     if (y_cor_og == BLACK)
