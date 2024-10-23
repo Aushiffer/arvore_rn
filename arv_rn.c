@@ -223,7 +223,7 @@ unsigned char remove_rn(ArvRN arv_rn, int chave) {
 }
 
 void bal_remocao(ArvRN *raiz, ArvRN *x) {    
-    ArvRN w;
+    ArvRN w; // Irmão de x
 
     while (*x != *raiz && (*x)->cor == BLACK) {
         if (*x == (*x)->pai->esq) {
