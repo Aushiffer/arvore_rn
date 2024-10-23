@@ -184,8 +184,7 @@ void transplant(ArvRN *raiz, ArvRN a, ArvRN b) {
     else
         a->pai->dir = b;
 
-    if (!eh_nulo(b))
-        b->pai = a->pai;
+    b->pai = a->pai;
 }
 
 unsigned char remove_rn(ArvRN arv_rn, int chave) {
@@ -223,9 +222,7 @@ unsigned char remove_rn(ArvRN arv_rn, int chave) {
     return 1;
 }
 
-void bal_remocao(ArvRN *raiz, ArvRN *x) {
-    if (eh_nulo(*x)) return;
-    
+void bal_remocao(ArvRN *raiz, ArvRN *x) {    
     ArvRN w;
 
     while (*x != *raiz && (*x)->cor == BLACK) {
