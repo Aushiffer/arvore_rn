@@ -107,7 +107,7 @@ void rot_dir(ArvRN *raiz, ArvRN no_rot) {
 }
 
 void bal_insercao(ArvRN *raiz, ArvRN *no_ins) {
-    ArvRN t;
+    ArvRN t; // Tio de no_ins
 
     while (*no_ins != *raiz && (*no_ins)->pai->cor == RED) {
         if ((*no_ins)->pai == (*no_ins)->pai->pai->esq) {
