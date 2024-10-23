@@ -242,11 +242,13 @@ void bal_remocao(ArvRN *raiz, ArvRN *x) {
                 w->cor = RED;
                 (*x) = (*x)->pai;
             } else {
-                if (w->esq->cor == RED) {
+                if (w->dir->cor == BLACK) {
                     w->cor = RED;
                     w->esq->cor = BLACK;
 
                     rot_dir(raiz, w);
+
+                    w = (*x)->pai->dir;
                 }
 
                 w->cor = (*x)->pai->cor;
@@ -273,11 +275,13 @@ void bal_remocao(ArvRN *raiz, ArvRN *x) {
                 w->cor = RED;
                 (*x) = (*x)->pai;
             } else {
-                if (w->dir->cor == RED) {
+                if (w->esq->cor == BLACK) {
                     w->cor = RED;
                     w->dir->cor = BLACK;
 
                     rot_esq(raiz, w);
+
+                    w = (*x)->pai->esq;
                 }
 
                 w->cor = (*x)->pai->cor;
